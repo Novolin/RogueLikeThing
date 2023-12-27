@@ -52,11 +52,25 @@ class DungeonLevel:
 
         while len(output) < count:
             # Choose how big, where:
-            roomSizeX = random.randint(minX, maxX)
-            roomSizeY = random.randint(minY, maxY)
-            placeX = random.randint(0, levelRange[1])
-            placeY = random.randint(0, levelRange[0])
-            
+            isRoomOk = True # is our generated room ok to add to the list
+            # Data Structured as: [Origin X, Origin Y, Size X, Size Y]
+            newRoomData = [random.randint(0, levelRange[1]), random.randint(0, levelRange[0]), random.randint(minX, maxX), random.randint(minY, maxY)]
+            # Now check for conflicts
+            for existing in output:
+                checkBounds = (existing[0] - 1, existing[1] - 1, existing[0] + existing[2] + 1, existing[0] + existing[3] + 1)
+                checkY = False #Should we check the y axis?
+                # Check for an X overlap:
+                if newRoomData[0] <= checkBounds[2]: 
+                    #origin is to the left of the right boundary, overlap is possible
+                    if newRoomData[0] + newRoomData[2] >= checkBounds[2]:
+                        # the right side is not to the left of the origin, overlap still possible, look for y conflicts
+                        checkY = True
+                elif newRoomData[0] + newRoomData[2] <= checkBounds[0]:
+                    #right edge is past the origin, we may have a conflict
+                    pass
+
+
+
 
         
 

@@ -1,0 +1,35 @@
+this is where im going to brainstorm what i blog next
+
+Now that we have data structures, let's start making some maps
+
+I'll tweak the classes a bit: I'm renaming what was our Floor class into "DungeonLevel", and made separate classes for "Floor" and "Wall" tiles. I will be able to do some stuff with these later, especially for things like traps, doors, stairs, etc. but this will also let me manage map data a bit more easily. When I search each tile, I can see if it's a wall or a floor with just 
+[ICODE]
+if type(tile goes here) is Floor:
+    do something that needs a floor
+[/ICODE]
+rather than having to call a specific property of an item, which might be confused if I mess something up with other room generation code.
+
+
+I'm also making the Tile class contain an attribute for the type of sprite to be displayed. this won't contain the actual sprite data, especially since I don't have the graphics stuff set yet, but also so it doesn't balloon our memory footprint when levels start being loaded.
+This will also let us change it for things like corners, different tilesets, different room types, line of sight, etc.
+
+
+Next up: actual random number generation!
+
+Starting by changing the empty numpy array to one filled with Wall objects, this makes it possible to carve out floor tiles for our rooms. That will help later for detecting overlaps, and where to place doors.
+
+Looking at how I initially set up this function, we only need the number of rooms, and I'll assign a default of 5 for now. The size of the level can be pulled from the array (as I do with levelRange), and everything else is pretty simple.
+output is an empty array that gets filled with each new room that's generated, making it easier to check for conflicts before we actually write the data to the map itself. 
+The algorithm fist chooses how big to make the room, and where to put it. 
+
+The data for the room is structured with the x and y origin followed by the x and y size. This information isn't going to be needed after we actually place the tiles, so it shouldn't matter if it's a bit messy right now. (i hope)
+
+Detecting conflicting rooms is the first challenge. I need to check for an overlap on one axis, and then if the overlap is on the other axis, with a buffer to make sure a wall is between each room.
+I start by loading a "no-go" zone, to give a proper frame to compare to.
+
+The first check is if the room is clear on either side.
+
+to detect conflicts:
+compare left and right bounds
+if there's a conflict, compare top and bottom bounds
+rooms can be directly adjacent, but not overlapping.
