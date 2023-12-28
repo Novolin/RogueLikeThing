@@ -10,7 +10,7 @@ import numpy as np
 # Import subscripts:
 
 import graphics
-import Actors
+import actors
 import mapdata
 
 
