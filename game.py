@@ -12,9 +12,16 @@ import numpy as np
 def main():
     # Pygame Setup:
     pygame.init()
-    screen = pygame.display.set_mode((640,480))
+    screen = pygame.display.set_mode((1024,768))
     clock = pygame.time.Clock()
     running = True
+    # Init game state:
+    gamestate = 0 # Default game state, turn-based map stuff.
+    currentMap = mapdata.DungeonLevel(0,0)
+    turnProcess = 0 #where are we in the "initiative"
+
+    # Init graphics data:
+    tilemap = pygame.image.load("graphics/Tilemap.png").convert()
     # Fire the loop!
     while running:
         # !! Check for events !!
@@ -22,14 +29,20 @@ def main():
             # If the window is closed, kill the script.
             if event.type == pygame.QUIT:
                 running = False
-
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    try:
+                        currentMap.generate_rand_layout()
+                    except:
+                        print("fuck")
+                        pass
+                    screen_need_refresh = True
+                if event.key == pygame.K_1:
+                    screen.fill("pink")
         # !! Tick game logic here !!
 
-        # Fill the screen with nothing to clear the last frame
-        screen.fill("pink")
-
         # !! Handle graphics processing here !!
-        
+        screen.blit(graphics.render_map_data(currentMap.map, tilemap), (0,0))
         # Draw the changes to the display
         pygame.display.flip()
 

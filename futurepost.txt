@@ -1,0 +1,7 @@
+TIME FOR GIRAFFICS:
+
+I whipped up a very basic set of sprites that we can use for the map right now: 
+
+Nothing fancy, but just something to draw to the screen.
+
+Rendering 
