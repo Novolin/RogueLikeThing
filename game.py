@@ -7,6 +7,12 @@
 import pygame
 import numpy as np 
 
+# Import subscripts:
+
+import graphics
+import actors
+import mapdata
+
 
 # !! Main game loop !!
 def main():
