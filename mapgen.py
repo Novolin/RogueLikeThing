@@ -4,5 +4,10 @@
 
 #ENTRY, EXIT, STAIR UP, ROUND, ETC.
 
-PLACE, ADD HALLS AFTER!
-YAAAY
+#PLACE, ADD HALLS AFTER!
+#YAAAY
+
+import json
+
+def gen_full_map(size):
+    pass
