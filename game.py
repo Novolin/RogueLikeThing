@@ -11,6 +11,13 @@ It is the base script for the game itself, and will call other scripts as needed
 '''
 
 
+'''
+This file contains game logic and related data
+It is the base script for the game itself, and will call other scripts as needed.
+
+'''
+
+
 import pygame
 import numpy as np 
 
@@ -21,6 +28,9 @@ from actors import Player #just import the player actor for now, we can do the o
 import mapdata
 
 actorList = [False]
+
+DEBUG_plr_loc = [0,0] # !! DEBUG !!: x/y coords for the camera to follow.
+actorList = []
 
 DEBUG_plr_loc = [0,0] # !! DEBUG !!: x/y coords for the camera to follow.
 
@@ -52,7 +62,8 @@ def main():
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     try:
-                        currentMap.generate_rand_layout()
+                        graphics.debug_draw_scr_data(currentMap.map, tilemap, DEBUG_plr_loc)
+
                     except:
                         print("Map Generation Error, Retrying...")
                         pass
