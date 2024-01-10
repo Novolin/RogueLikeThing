@@ -19,7 +19,9 @@ import graphics
 from actors import Player #just import the player actor for now, we can do the other stuff at a later point.
 import mapdata
 
-actorList = [False]
+actorList = [Player(0,0)]
+
+
 
 
 # !! Main game loop !!
@@ -38,7 +40,6 @@ def main():
     currentMap.generate_rand_layout()
     
     
-    actorList[0] = Player(0,0)
     actorList[0].get_player_data(False)
     # Init graphics data:
     map_view = graphics.Camera(actorList[0])
@@ -54,8 +55,6 @@ def main():
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     screen_need_refresh = True
-                elif event.key == pygame.K_1:
-                    screen.fill("pink")
                 elif event.key == pygame.K_UP:
                     if not actorList[0].posy == 0:
                         actorList[0].move_actor(-1, True)

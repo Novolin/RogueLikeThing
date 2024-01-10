@@ -32,14 +32,15 @@ class Wall(Tile):
         # We'll figure out interactions at some point, maybe even checking for what kind of neighbors it has
         # then we can render corners and stuff
 
-
 class DungeonLevel:
     '''parent class for a dungeon floor, which we can use for basically everything'''
-    def __init__(self, levelName, floorType, tileset):
+    def __init__(self, levelName, floorType, tileset, origin):
         self.levelName = levelName # what are we calling this floor
         self.floorType = floorType # Is there anything we need to do with it?
         self.map = np.full([64,64], Wall()) # Create a 64x64 grid, filled with walls
         self.tileset = tileset # What tile set should we use to display the map
+        self.entry_point = origin # Where should the entrance be?
+        self.active = True # Is this the map that we are currently using
 
     def generate_rand_layout(self, count = 8):
         '''Generate a random set of rooms'''
@@ -86,8 +87,10 @@ class DungeonLevel:
                     placeY = newRoomData[1]
                 retry = 5 # Reset the retry counter
                 counter = counter - 1 # decrement the counter
-
-
+    def generate_map(self, size, origin = False):
+        if not origin:
+            origin = [floor(size[0]/2), size[1]] # Place at bottom center for any new floor
+        # generate our first room based on the 
 
 class Dungeon:
     def __init__(self, depth):
@@ -102,6 +105,11 @@ class Town:
     def __init__(self):
         pass
 
+class Room:
+    def __init__(self, shape, size, anchor):
+        self.width = random.randint(size*1, size*3)
+        self.height = random.randint(size*1, size*3)
+        self.origin = origin
 ## Debug block:
 if __name__ == "__main__":
     test = DungeonLevel(0,0)

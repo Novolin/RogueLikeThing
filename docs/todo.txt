@@ -1,0 +1,25 @@
+- actor sprites are missing transparency
+- map generation is bad 
+
+Not Started:
+- Enemies
+- Items
+- Menus
+- Collision
+
+In Progress:
+- Map Generation (~20% after rewrite)
+- Map Rendering (~50%?)
+- Input Handling (1%)
+
+
+mapgen rewrite notes:
+
+Get origin, generate room at point.
+ Choose next point
+
+ draw a hall to there
+
+ generate a room on it
+
+ repeat until map is ~30-50% rooms
