@@ -8,7 +8,8 @@ This is where all the actor types will live!
 The actual enemy data will likely live in a json or csv or something funky.
 '''
 
-
+import graphics
+import pygame
 
 class GameActor:
     '''This is a parent class for all Actors'''
@@ -18,14 +19,26 @@ class GameActor:
         self.posy = posy
         self.name = name
         self.static = static
+        self.sprite = False
+
+    def get_actor_sprite(self, sprite_id, graphicsScale = 32):
+        sprite_sheet = pygame.image.load("Graphics/Tilemap.png").convert()
+        actor_sprite = sprite_sheet.subsurface(0, graphicsScale * sprite_id, graphicsScale, graphicsScale)
+        return actor_sprite
+    def move_actor(self, distance, vertical = False):
+        if vertical:
+            self.posy += distance
+        else:
+            self.posx += distance
     def attack(self, targetx, targety):
         pass #tbd
 
 
 class Player(GameActor):
     '''The Player, The Main Character, You!'''
-    def __init__(self):
+    def __init__(self, posx, posy):
         # We won't use this for loading the player data directly.
+        super().__init__(posx, posy, "Player", False)
         pass
 
     def get_player_data(self, useSave):
@@ -46,7 +59,11 @@ class Player(GameActor):
             self.equipment = {}
             self.level = 1
             self.xp = 0
-            self.sprite = False # Load the sprite here, as image data, so it can be used by pygame rendering
+            self.sprite = 3 # The ID for the sprite to use, for indexing on the sprite list.
+
+class Enemy(GameActor):
+    # the stuff
+    pass
                 
 
         

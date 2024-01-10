@@ -20,7 +20,7 @@ class Floor(Tile):
     '''A floor tile!'''
     def __init__(self):
         super().__init__(False, [], [])
-        self.sprite = ["floor"] #placeholder, give an actual sprite name
+        self.sprite = "map_5" #placeholder, give an actual sprite name
         # Later, we can add some stuff to do with interacting with floors
         # also setting up floor traps, etc.
 
@@ -28,17 +28,18 @@ class Wall(Tile):
     '''A wall tile!'''
     def __init__(self):
         super().__init__(True, [], [])
-        self.sprite = ["wall"]
+        self.sprite = "map_0"
         # We'll figure out interactions at some point, maybe even checking for what kind of neighbors it has
         # then we can render corners and stuff
 
 
 class DungeonLevel:
     '''parent class for a dungeon floor, which we can use for basically everything'''
-    def __init__(self, levelName, floorType):
+    def __init__(self, levelName, floorType, tileset):
         self.levelName = levelName # what are we calling this floor
         self.floorType = floorType # Is there anything we need to do with it?
         self.map = np.full([64,64], Wall()) # Create a 64x64 grid, filled with walls
+        self.tileset = tileset # What tile set should we use to display the map
 
     def generate_rand_layout(self, count = 8):
         '''Generate a random set of rooms'''
