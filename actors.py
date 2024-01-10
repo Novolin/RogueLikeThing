@@ -19,27 +19,38 @@ class GameActor:
         self.posy = posy
         self.name = name
         self.static = static
-        self.sprite = False
+        self.sprite_id = False #int to find id
+        self.visible = True
 
-    def get_actor_sprite(self, sprite_id, graphicsScale = 32):
+    def get_actor_sprite(self, graphicsScale = 32):
         sprite_sheet = pygame.image.load("Graphics/Tilemap.png").convert()
-        actor_sprite = sprite_sheet.subsurface(0, graphicsScale * sprite_id, graphicsScale, graphicsScale)
+        actor_sprite = sprite_sheet.subsurface(0, graphicsScale * self.sprite_id, graphicsScale, graphicsScale)
         return actor_sprite
+
     def move_actor(self, distance, vertical = False):
         if vertical:
             self.posy += distance
         else:
             self.posx += distance
+
     def attack(self, targetx, targety):
         pass #tbd
 
+    def get_visible(self, camera_origin, camera_size):
+        if self.visible:
+            camera_bounds = [camera_origin[0], camera_origin[0] + camera_size[0], camera_origin[1], camera_origin[1] + camera_size[1]]
+            if camera_bounds[0] <= self.posx <= camera_bounds[1]:
+                # X good, check Y
+                if camera_bounds[2] <= self.posy <= camera_bounds[3]:
+                    view_relative_pos = [self.posx - camera_origin[0], self.posy - camera_origin[1]]
+                    return view_relative_pos
+        return False #if it falls through the cracks, say no.
 
 class Player(GameActor):
     '''The Player, The Main Character, You!'''
     def __init__(self, posx, posy):
         # We won't use this for loading the player data directly.
         super().__init__(posx, posy, "Player", False)
-        pass
 
     def get_player_data(self, useSave):
         if useSave:
@@ -52,14 +63,14 @@ class Player(GameActor):
         else:
             # We're making new player data, so run whatever character creator
             # for now, just use a set of default values:
-            super.__init__(0,0,"Player", False)
+            super().__init__(0,0,"Player", False)
             self.hp = 100
             self.mp = 100
             self.inventory = []
             self.equipment = {}
             self.level = 1
             self.xp = 0
-            self.sprite = 3 # The ID for the sprite to use, for indexing on the sprite list.
+            self.sprite_id = 2 # The ID for the sprite to use, for indexing on the sprite list.
 
 class Enemy(GameActor):
     # the stuff

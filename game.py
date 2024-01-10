@@ -10,14 +10,6 @@ It is the base script for the game itself, and will call other scripts as needed
 
 '''
 
-
-'''
-This file contains game logic and related data
-It is the base script for the game itself, and will call other scripts as needed.
-
-'''
-
-
 import pygame
 import numpy as np 
 
@@ -29,10 +21,6 @@ import mapdata
 
 actorList = [False]
 
-DEBUG_plr_loc = [0,0] # !! DEBUG !!: x/y coords for the camera to follow.
-actorList = []
-
-DEBUG_plr_loc = [0,0] # !! DEBUG !!: x/y coords for the camera to follow.
 
 # !! Main game loop !!
 def main():
@@ -43,14 +31,18 @@ def main():
     running = True
     # Init game state:
     gamestate = 0 # Default game state, turn-based map stuff.
-    currentMap = mapdata.DungeonLevel(0,0) # this will need a replacement eventually
     turnProcess = 0 #where are we in the "initiative"
 
-    # Init graphics data:
     
-
-    #temp: figure out a nicer way to do this when things are hectic
+    currentMap = mapdata.DungeonLevel(0,0, graphics.MapTiles()) # this will need a replacement eventually
+    currentMap.generate_rand_layout()
+    
+    
     actorList[0] = Player(0,0)
+    actorList[0].get_player_data(False)
+    # Init graphics data:
+    map_view = graphics.Camera(actorList[0])
+
     # Fire the loop!
 
     while running:
@@ -61,12 +53,6 @@ def main():
                 running = False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
-                    try:
-                        graphics.debug_draw_scr_data(currentMap.map, tilemap, DEBUG_plr_loc)
-
-                    except:
-                        print("Map Generation Error, Retrying...")
-                        pass
                     screen_need_refresh = True
                 elif event.key == pygame.K_1:
                     screen.fill("pink")
@@ -74,20 +60,21 @@ def main():
                     if not actorList[0].posy == 0:
                         actorList[0].move_actor(-1, True)
                 elif event.key == pygame.K_DOWN:
-                    if not actorList[0].posy == currentMap.map.shape[1]:
+                    if not actorList[0].posy == currentMap.map.shape[1] -1:
                         actorList[0].move_actor(1, True)
                 elif event.key == pygame.K_LEFT:
                     if not actorList[0].posx == 0:
                         actorList[0].move_actor(-1, False)
                 elif event.key == pygame.K_RIGHT:
-                    if not actorList[0].posx == currentMap.map.shape[0]:
+                    if not actorList[0].posx == currentMap.map.shape[0] -1:
                         actorList[0].move_actor(1, False)
         # !! Tick game logic here !!
 
         # !! Handle graphics processing here !!
         #todo: differentiate between menus/game/etc. 
-        screen.blit(graphics.render_map_data(currentMap.map, tilemap, (actorList[0].posx, actorList[0].posy)), (0,0))
-        graphics.draw_actors(actorList, screen)
+        map_view.refresh_screen(currentMap, actorList)
+        screen.blit(map_view.cam_surface, (0,0))
+
         # Draw the changes to the display
         pygame.display.flip()
 

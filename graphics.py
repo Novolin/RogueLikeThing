@@ -10,76 +10,76 @@ class Camera:
     # A Camera object that can be used to manage the viewport
     def __init__(self, target, cam_res = [1024,768], scale = 32):
         self.origin = [0,0] # Top Left X/Y
+        if type(target) == list:
+            self.target_point = True
+        else:
+            self.target_point = False
         self.target = target # What the camera is focused on, usually the player.
         self.viewport_resolution = cam_res # What is the size of the camera space (in case we do multi window/ui stuff?)
+        self.viewport_grid_size = [ceil(cam_res[0] / scale), ceil(cam_res[1] / scale)] #how many grid tiles will it display
         self.scale = scale # How many pixels per tile
-    def render_map_data(map_data, map_tilemap):
+        self.update_cam_origin()
+        self.cam_surface = pygame.Surface(cam_res)
+
+    def render_map_data(self, map_data, map_tilemap):
         floor_tile = map_tilemap.floor_tile
         wall_tile = map_tilemap.wall_tile # Eventually change to be a 9 way dealio, this is just for testing atm
+        
+        # Update the camera origin, and ensure that it doesn't go out of bounds
+        self.update_cam_origin()
+        if self.origin[0] + self.viewport_grid_size[0] > map_data.shape[0]: # We need map data to do these checks
+            self.origin[0] = map_data.shape[0] - self.viewport_grid_size[0]
+        if self.origin[1] + self.viewport_grid_size[1] > map_data.shape[1]:
+            self.origin[1] = map_data.shape[1] - self.viewport_grid_size[1]
+        tiles_to_write = []
+        map_x_count = self.origin[0]
+        while map_x_count < self.origin[0] + self.viewport_grid_size[0]:
+            map_y_count = self.origin[1]
+            while map_y_count < self.origin[1] + self.viewport_grid_size[1]:
+                tileType = map_data[map_x_count, map_y_count].sprite
+                if tileType == "map_5": #For now, just do if/else, maybe index tiles in the map data itself? i.e. assign each one a number, then have an array of tile objects to choose from?
+                    write_tile = floor_tile
+                else:
+                    write_tile = wall_tile
+                tiles_to_write.append([write_tile, ((map_x_count - self.origin[0]) * self.scale , (map_y_count - self.origin[1]) * self.scale)])
+                map_y_count += 1
+            map_x_count += 1
+        self.cam_surface.blits(tiles_to_write)
+        return
 
+    def update_cam_origin(self):
+        if self.target_point:
+            self.origin = [self.target[0] - floor(self.viewport_grid_size[0]/2), self.target[1] - floor(self.viewport_grid_size[1]/2)]
+        else:
+            self.origin = [self.target.posx - floor(self.viewport_grid_size[0]/2), self.target.posy - floor(self.viewport_grid_size[1]/2)]
+        if self.origin[0] < 0:
+            self.origin[0] = 0
+        if self.origin[1] < 0:
+            self.origin[1] = 0
+        return 
 
+    def draw_actors_in_view(self, actor_list):
+        for actor in actor_list:
+            act_rel_pos = actor.get_visible(self.origin, self.viewport_grid_size)
+            if act_rel_pos:
+                self.cam_surface.blit(actor.get_actor_sprite(), (act_rel_pos[0] * self.scale, act_rel_pos[1] * self.scale))
 
+    def refresh_screen(self, map_obj, actors):
+        self.update_cam_origin()
+        self.cam_surface.fill("white")
+        self.render_map_data(map_obj.map, map_obj.tileset)
+        self.draw_actors_in_view(actors)
 
 class TileSet:
     # Parent class for handling tile maps
-    def __init__(self, asset_file):
-        self.asset_file = pygame.image.load("graphics/Tilemap.png").convert()
+    def __init__(self, asset_file, grid = 32):
+        self.asset_file = asset_file
+        self.tile_surface = pygame.image.load(asset_file).convert()
 class MapTiles(TileSet):
-    pass
+    def __init__(self, asset_file = "graphics\map_tiles.png", grid = 32):
+        super().__init__(asset_file, grid)
+        self.floor_tile = self.tile_surface.subsurface(0,0,grid,grid)
+        self.wall_tile = self.tile_surface.subsurface(0,grid, grid, grid) #Figure out a 9 way system
 
  # Edit this if you want to change how many pixels per tile
-def render_map_data(map_data, tilemap, playerPos, windowRes = (1024,768), graphicsScale = 32):
-    #load the tilemap:
-    floor_tile = tilemap.subsurface(0,0,graphicsScale,graphicsScale)
-    wall_tile = tilemap.subsurface(0,graphicsScale,graphicsScale,graphicsScale)
 
-    # Find the bounds of our camera space:
-    map_dims = map_data.shape #for the map
-    tile_count = (ceil(windowRes[0] / graphicsScale), ceil(windowRes[1]/graphicsScale)) #for the window
-    camera_min = (floor(tile_count[0]/2), floor(tile_count[1]/2)) #left/upper bound
-    camera_max = (map_dims[0] - camera_min[0], map_dims[1] - camera_min[1]) # right/lower bound
-
-    # find the top left square we want to render
-    camera_origin = [playerPos[0] - camera_min[0], playerPos[1] - camera_min[1]] 
-    if camera_origin[0] < 0:
-        camera_origin[0] = 0
-    elif camera_origin[0] > map_dims[0]:
-        camera_origin[0] = map_dims[0]
-    if camera_origin[1] < 0:
-        camera_origin[1] = 0
-    elif camera_origin[1] > map_dims[1]:
-        camera_origin[1] = map_dims[1]
-    map_surface = pygame.Surface((tile_count[0] * graphicsScale, tile_count[1] * graphicsScale))
-
-    # I think this is a slow method, but it's what I have in my head right now. I'll figure something better out eventually.
-    tiles_to_write = []
-    map_x_count = camera_origin[0]
-    while map_x_count < camera_origin[0] + tile_count[0]:
-        map_y_count = camera_origin[1]
-        while map_y_count < camera_origin[1] + tile_count[1]:
-            tileType = map_data[map_x_count, map_y_count].sprite
-            if tileType == "map_5": #For now, just do if/else, maybe index tiles in the map data itself? i.e. assign each one a number, then have an array of tile objects to choose from?
-                write_tile = floor_tile
-            else:
-                write_tile = wall_tile
-            tiles_to_write.append([write_tile, ((map_x_count - camera_origin[0]) * graphicsScale , (map_y_count - camera_origin[1]) * graphicsScale)]) #this is what I need to fix to make tiles render correctly, I think?
-            map_y_count += 1
-        map_x_count += 1
-    map_surface.blits(tiles_to_write)
-    return map_surface #output the surface so it can be drawn to the screen.
-
-def draw_actors(actorList, surf, graphicsScale = 32) -> list:
-    # return a list of surfaces with each actor on the screen
-    output = []
-    for actor in actorList:
-        if type(actor) == Player:
-            # With player position, check that we're in bounds:
-            pass
-    surf.blits(output)
-
-def obj_in_view(posx, posy, playerPosX, playerPosY, windowRes, graphicsScale = 32):
-    # Tells you if an object is within the rendered area.
-    scr_width = windowRes[0] / graphicsScale
-    scr_height = windowRes[1] / graphicsScale
-    cam_top_left = (playerPosX - scr_width, playerPosY - scr_height)
-    

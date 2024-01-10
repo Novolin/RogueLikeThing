@@ -3,4 +3,8 @@ V0.0 - Initial Version
         - Limited Graphics framework
         - Map Generation implemented, to be reworked
         - basic camera system implemented.
-V0.0a - Initial with Objects
+V0.0a - Updated Camera:
+        - Camera is now object-based, allowing for sub-views
+        - fixed crashes when camera scrolls too far
+        - Actors/Map data updated to reflect camera changes
+        - Reworked game rendering code to reflect camera changes.
