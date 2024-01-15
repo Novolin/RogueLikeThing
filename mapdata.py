@@ -8,30 +8,45 @@ import json
 
 class Tile:
     '''Parent class for a map tile.'''
-    def __init__(self, clip, actors, contents):
-        self.clip = clip # Can you walk on it?
+    def __init__(self, tile_type, actors, contents):
+        self.tile_type = tile_type # Floor, what kind of wall, etc.
         self.actors = actors # Who is living here
         self.contents = contents # What does it have in its pockets
-        self.sprite = [] # what sprite should be displayed for it.
         self.visible = True # Can the player see it
         self.revealed = True # Has the player discovered it
+    def get_tile_contents(self) -> bool:
+        # Returns a list of tile contents and actors.
+        content_list = {}
+        content_list["actors"] = self.actors
+        content_list["objects"] = self.contents
+    def can_actor_enter(self):
+        if self.tile_type == "wall":
+            return False
+        if len(self.actors) > 0:
+            for actor in self.actors: 
+                if actor.solid:
+                    return False
+        return True
+    def activate_tile(self):
+        return False
 
 class Floor(Tile):
     '''A floor tile!'''
-    def __init__(self):
-        super().__init__(False, [], [])
-        self.sprite = "map_5" #placeholder, give an actual sprite name
-        # Later, we can add some stuff to do with interacting with floors
-        # also setting up floor traps, etc.
+    def __init__(self, actors = [], contents = []):
+        super().__init__("floor", actors, contents)
+        # add stuff you might need with a floor, like interactions, traps, etc.
 
 class Wall(Tile):
     '''A wall tile!'''
-    def __init__(self):
-        super().__init__(True, [], [])
-        self.sprite = "map_0"
+    def __init__(self, actors = [], contents = False):
+        super().__init__("wall", actors, contents)
+    
         # We'll figure out interactions at some point, maybe even checking for what kind of neighbors it has
         # then we can render corners and stuff
-
+class Stair(Tile):
+    def __init(self, direction, actors = [], contents = False):
+        super().__init__("floor", actors, contents) #for now, play like its just a regular floor
+        self.direction = direction
 class DungeonLevel:
     '''parent class for a dungeon floor, which we can use for basically everything'''
     def __init__(self, levelName, floorType, tileset, origin):
@@ -105,11 +120,14 @@ class Town:
     def __init__(self):
         pass
 
-class Room:
-    def __init__(self, shape, size, anchor):
-        self.width = random.randint(size*1, size*3)
-        self.height = random.randint(size*1, size*3)
-        self.origin = origin
+def save_map_as_file( map, ftype = "text" , location = "debug\mapfile.txt"):
+    # outputs the map as a file
+    
+    if ftype == "text":
+        with open(location) as outFile:
+            outFile.write("pee")
+    return True
+
 ## Debug block:
 if __name__ == "__main__":
     test = DungeonLevel(0,0)

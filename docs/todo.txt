@@ -6,11 +6,15 @@ Not Started:
 - Items
 - Menus
 - Collision
+- Sound
 
 In Progress:
 - Map Generation (~20% after rewrite)
 - Map Rendering (~50%?)
+    * handle multiple tilemaps
+    * draw sprites in the right location
 - Input Handling (1%)
+- Graphics (lmfao%)
 
 
 mapgen rewrite notes:

@@ -36,9 +36,9 @@ class Camera:
         while map_x_count < self.origin[0] + self.viewport_grid_size[0]:
             map_y_count = self.origin[1]
             while map_y_count < self.origin[1] + self.viewport_grid_size[1]:
-                tileType = map_data[map_x_count, map_y_count].sprite
-                if tileType == "map_5": #For now, just do if/else, maybe index tiles in the map data itself? i.e. assign each one a number, then have an array of tile objects to choose from?
-                    write_tile = floor_tile
+                tileType = map_data[map_x_count, map_y_count].tile_type
+                if tileType == "floor": 
+                    write_tile = floor_tile # write something in tilemap that will return the correct subtile
                 else:
                     write_tile = wall_tile
                 tiles_to_write.append([write_tile, ((map_x_count - self.origin[0]) * self.scale , (map_y_count - self.origin[1]) * self.scale)])

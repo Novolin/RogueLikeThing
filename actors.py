@@ -21,6 +21,7 @@ class GameActor:
         self.static = static
         self.sprite_id = False #int to find id
         self.visible = True
+        self.solid = True # Assume nothing can pass
 
     def get_actor_sprite(self, graphicsScale = 32):
         sprite_sheet = pygame.image.load("Graphics/Tilemap.png").convert()
@@ -45,7 +46,6 @@ class GameActor:
                     view_relative_pos = [self.posx - camera_origin[0], self.posy - camera_origin[1]]
                     return view_relative_pos
         return False #if it falls through the cracks, say no.
-
 class Player(GameActor):
     '''The Player, The Main Character, You!'''
     def __init__(self, posx, posy):
