@@ -8,17 +8,18 @@ import json
 
 class Tile:
     '''Parent class for a map tile.'''
-    def __init__(self, tile_type, actors, contents):
+    def __init__(self, tile_type):
         self.tile_type = tile_type # Floor, what kind of wall, etc.
-        self.actors = actors # Who is living here
-        self.contents = contents # What does it have in its pockets
+        self.actors = [] # Who is living here
+        self.contents = [] # What does it have in its pockets
         self.visible = True # Can the player see it
         self.revealed = True # Has the player discovered it
-    def get_tile_contents(self) -> bool:
+    def get_tile_contents(self):
         # Returns a list of tile contents and actors.
         content_list = {}
         content_list["actors"] = self.actors
         content_list["objects"] = self.contents
+        return content_list
     def can_actor_enter(self):
         if self.tile_type == "wall":
             return False
@@ -29,30 +30,17 @@ class Tile:
         return True
     def activate_tile(self):
         return False
+    def add_actor(self, actor):
+        # Check if an actor can go in the tile, return true if successful.
+        self.actors.append(actor)
+        return True
 
-class Floor(Tile):
-    '''A floor tile!'''
-    def __init__(self, actors = [], contents = []):
-        super().__init__("floor", actors, contents)
-        # add stuff you might need with a floor, like interactions, traps, etc.
-
-class Wall(Tile):
-    '''A wall tile!'''
-    def __init__(self, actors = [], contents = False):
-        super().__init__("wall", actors, contents)
-    
-        # We'll figure out interactions at some point, maybe even checking for what kind of neighbors it has
-        # then we can render corners and stuff
-class Stair(Tile):
-    def __init(self, direction, actors = [], contents = False):
-        super().__init__("floor", actors, contents) #for now, play like its just a regular floor
-        self.direction = direction
 class DungeonLevel:
     '''parent class for a dungeon floor, which we can use for basically everything'''
     def __init__(self, levelName, floorType, tileset, origin):
         self.levelName = levelName # what are we calling this floor
         self.floorType = floorType # Is there anything we need to do with it?
-        self.map = np.full([64,64], Wall()) # Create a 64x64 grid, filled with walls
+        self.map = np.full([64,64], Tile("wall")) # Create a 64x64 grid, filled with walls
         self.tileset = tileset # What tile set should we use to display the map
         self.entry_point = origin # Where should the entrance be?
         self.active = True # Is this the map that we are currently using
@@ -103,9 +91,7 @@ class DungeonLevel:
                 retry = 5 # Reset the retry counter
                 counter = counter - 1 # decrement the counter
     def generate_map(self, size, origin = False):
-        if not origin:
-            origin = [floor(size[0]/2), size[1]] # Place at bottom center for any new floor
-        # generate our first room based on the 
+        pass # call from mapgen?
 
 class Dungeon:
     def __init__(self, depth):
@@ -120,7 +106,7 @@ class Town:
     def __init__(self):
         pass
 
-def save_map_as_file( map, ftype = "text" , location = "debug\mapfile.txt"):
+def save_map_as_file(map, ftype = "text" , location = "debug\mapfile.txt"):
     # outputs the map as a file
     
     if ftype == "text":
@@ -128,24 +114,48 @@ def save_map_as_file( map, ftype = "text" , location = "debug\mapfile.txt"):
             outFile.write("pee")
     return True
 
-## Debug block:
-if __name__ == "__main__":
-    test = DungeonLevel(0,0)
-    test.generate_rand_layout()
-    rendx = 0
-    outstr = ""
-    while rendx < 64:
-        rendy = 0
-        while rendy < 64:
-            if type(test.map[rendx, rendy]) is Wall:
-                print("#", end="")
-                outstr += "#"
-            else: 
-                print(".", end="")
-                outstr += "."
-            rendy += 1
-        print("")
-        outstr += "\n"
-        rendx += 1
-    with open("out.txt", "w") as output:
-        output.write(outstr)
+def load_map_from_file(filename):
+    #Open the file and load into a dict
+    with open(filename) as map_json:
+        place_data = json.load(map_json)
+        #Make a 2d array of walls
+        loaded_map = np.full((place_data["sizex"], place_data["sizey"]), Tile("wall"))
+        # Place rooms:
+        for room in place_data["rooms"]:
+            countx = place_data["rooms"][room]["origin"]["x"]
+            while countx < place_data["rooms"][room]["origin"]["x"] + place_data["rooms"][room]["width"]:
+                county = place_data["rooms"][room]["origin"]["y"]
+                while county < place_data["rooms"][room]["origin"]["y"] +place_data["rooms"][room]["height"]:
+                    loaded_map[countx][county] = Tile("floor")
+                    county += 1
+                countx += 1
+        # Place halls
+        for hall in place_data["halls"]:
+            # Find the direction it's going:
+            hcount = 0
+            if place_data["halls"][hall]["direction"] == "-x":
+                while hcount < place_data["halls"][hall]["length"]:
+                    loaded_map[place_data["halls"][hall]["start"]["x"] - hcount][place_data["halls"][hall]["start"]["y"]] = Tile("floor")
+                    hcount += 1
+            elif place_data["halls"][hall]["direction"] == "+x":
+                while hcount < place_data["halls"][hall]["length"]:
+                    loaded_map[place_data["halls"][hall]["start"]["x"] + hcount][place_data["halls"][hall]["start"]["y"]] = Tile("floor")
+                    hcount += 1
+            elif place_data["halls"][hall]["direction"] == "-y":
+                while hcount < place_data["halls"][hall]["length"]:
+                    loaded_map[place_data["halls"][hall]["start"]["x"]][place_data["halls"][hall]["start"]["y"] - hcount] = Tile("floor")
+                    hcount += 1
+            elif place_data["halls"][hall]["direction"] == "+y":
+                while hcount < place_data["halls"][hall]["length"]:
+                    loaded_map[place_data["halls"][hall]["start"]["x"]][place_data["halls"][hall]["start"]["y"] + hcount] = Tile("floor")
+                    hcount += 1
+        # Place Stairs
+        for stair in place_data["stairs"]:
+            loaded_map[place_data["stairs"][stair]["x"]][place_data["stairs"][stair]["y"]] = Tile("stair"+stair)
+        # Doors and other actors #
+        #NOTE: you need to make this pass a separate list, 
+        for door in place_data["doors"]:
+            loaded_map[place_data["doors"][door]["x"]][place_data["doors"][door]["y"]].add_actor(place_data["doors"][door]["state"]) #temp, since we don't have a door actor yet.
+        for actor in place_data["actors"]:
+            loaded_map[place_data["actors"][actor]["x"]][place_data["actors"][actor]["y"]].add_actor(actor)
+        return loaded_map

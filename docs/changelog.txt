@@ -8,3 +8,7 @@ V0.0a - Updated Camera:
         - fixed crashes when camera scrolls too far
         - Actors/Map data updated to reflect camera changes
         - Reworked game rendering code to reflect camera changes.
+V0.1a - Save Data #1:
+        - Added load function to map module
+        - broke map generation horrifically (hence load function)
+        - got really mad at map generation
