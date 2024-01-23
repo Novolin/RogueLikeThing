@@ -23,12 +23,17 @@ class GameActor:
         self.visible = True
         self.solid = True # Assume nothing can pass
 
+    def activate(self): # What happens when you press "use" on it.
+        pass 
+
     def get_actor_sprite(self, graphicsScale = 32):
         sprite_sheet = pygame.image.load("data/Tilemap.png").convert()
         actor_sprite = sprite_sheet.subsurface(0, graphicsScale * self.sprite_id, graphicsScale, graphicsScale)
         return actor_sprite
 
     def move_actor(self, distance, vertical = False):
+        #this is where you would check for collision
+
         if vertical:
             self.posy += distance
         else:
@@ -75,6 +80,21 @@ class Player(GameActor):
 class Enemy(GameActor):
     # the stuff
     pass
-                
+
+class Door(GameActor):
+    def __init__(self, posx, posy, open):
+        super().__init__(posx, posy, "Door", True)
+        self.open = open
+    
+    def activate(self):
+        if self.open:
+            self.open = False
+            self.solid = True
+            # Change sprite to closed
+        else:
+            self.open = True
+            self.solid = False
+            # Change to open sprite
+
 
         

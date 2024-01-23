@@ -5,33 +5,45 @@
 #import mapgen
 import mapdata
 def write_map_to_txt(mapD):
+    outstring = ""
+    actor_locations = []
+    actor_chars = []
+    for actor in mapD.actors:
+        actor_locations.append([actor.posx, actor.posy])
+        print(actor.name)
+        if actor.name == "Player":
+            actor_chars.append("@")
+        elif actor.name == "Door":
+            if actor.open:
+                actor_chars.append("O")
+            else:
+                actor_chars.append("D")
+        else:
+            actor_chars.append("?")
+    #we're not doing items yet
     with open("mapdebug.txt", "w") as outfile:
         countx = 0
-        while countx < mapD.shape[0]:
+        while countx < mapD.map.shape[0]:
             county = 0
-            while county < mapD.shape[1]:
-                check_tile = mapD[countx][county]
-                if len(check_tile.actors) > 0:
-                    if check_tile.actors[0] == "Player":
-                        outfile.write("@")
-                    elif check_tile.actors[0] == "closed":
-                        outfile.write("D")
-                    elif check_tile.actors[0] == "open":
-                        outfile.write("d")
-                    else:
-                        outfile.write(".")
-                elif check_tile.tile_type == "floor":
-                    outfile.write(".")
-                elif check_tile.tile_type == "stairup":
-                    outfile.write("^")
-                elif check_tile.tile_type == "stairdown":
-                    outfile.write("v")
+            while county < mapD.map.shape[1]:
+                if [countx, county] in actor_locations:
+                    outstring += actor_chars[actor_locations.index([countx, county])]
                 else:
-                    outfile.write("#")
+                    check_tile = mapD.map[countx][county]
+                    if check_tile.tile_type == "floor":
+                        outstring += "."
+                    elif check_tile.tile_type == "stairup":
+                        outstring += "^"
+                    elif check_tile.tile_type == "stairdown":
+                        outstring += "v"
+                    else:
+                        outstring += "#"
                 county += 1
             countx += 1
-            outfile.write("\n")
+            outstring += "\n"
+        outfile.write(outstring)
         
         
 
-write_map_to_txt(mapdata.load_map_from_file("maps/debugmap.json"))
+map_to_write = mapdata.DungeonLevel("maps/debugmap.json")
+write_map_to_txt(map_to_write)

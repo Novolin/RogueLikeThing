@@ -17,13 +17,12 @@ In Progress:
 - Graphics (lmfao%)
 
 
-mapgen rewrite notes:
-
-Get origin, generate room at point.
- Choose next point
-
- draw a hall to there
-
- generate a room on it
-
- repeat until map is ~30-50% rooms
+window writing notes:
+    1024x768 (0,0) - window size
+    720x744 (304, 24) - sub view
+    716x716 (305, 49) - Sub window
+    672x672 (327, 71) - map view area
+    303x24 (1,24) - menu bar
+    303 x 143 (1,48) - Player window
+    303 x 215, (1,191) - Verb window
+    303 x 362, (1, 406) - Message window (you'll need subsurfaces for each line)

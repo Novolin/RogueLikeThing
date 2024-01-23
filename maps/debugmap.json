@@ -191,77 +191,77 @@
         "D1":{
             "x":14,
             "y":16,
-            "state":"closed"
+            "state":1
         },
         "D2":{
             "x":10,
             "y":13,
-            "state":"closed"
+            "state":0
         },
         "D3":{
             "x":24,
             "y":22,
-            "state":"closed"
+            "state":0
         },
         "D4":{
             "x":13, 
             "y":19,
-            "state":"closed"
+            "state":0
         },
         "D5":{
             "x":10,
             "y":25,
-            "state":"closed"
+            "state":0
         },
         "D6":{
             "x":21,
             "y":26,
-            "state":"closed"
+            "state":0
         },
         "D7":{
             "x":12,
             "y":26,
-            "state":"closed"
+            "state":0
         },
         "D8":{
             "x":5,
             "y":26,
-            "state":"closed"
+            "state":0
         },
         "D9":{
             "x":24,
             "y":23,
-            "state":"closed"
+            "state":0
         },
         "D10":{
             "x":19,
             "y":18,
-            "state":"closed"
+            "state":0
         },
         "D11":{
             "x":17,
             "y":18,
-            "state":"open"
+            "state":1
         },
         "D12":{
             "x":26,
             "y":10,
-            "state":"closed"
+            "state":0
         },
         "D13":{
             "x":26,
             "y":12,
-            "state":"closed"
+            "state":0
         },
         "D14":{
             "x":19,
             "y":8,
-            "state":"closed"
+            "state":0
         },
         "D15":{
             "x":8,
             "y":5,
-            "state":"open"
+            "state":1
         }
     },
     "actors":{
