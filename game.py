@@ -36,9 +36,8 @@ def main():
     turnProcess = 0 #where are we in the "initiative"
 
     
-    currentMap = mapdata.DungeonLevel(0,0, graphics.MapTiles()) # this will need a replacement eventually
-    currentMap.generate_rand_layout()
-    
+    currentMap = mapdata.DungeonLevel(0,0, graphics.MapTiles(), False) # this will need a replacement eventually
+    currentMap.map = mapdata.load_map_from_file("maps/debugmap.json")
     
     actorList[0].get_player_data(False)
     # Init graphics data:

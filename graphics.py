@@ -36,11 +36,13 @@ class Camera:
         while map_x_count < self.origin[0] + self.viewport_grid_size[0]:
             map_y_count = self.origin[1]
             while map_y_count < self.origin[1] + self.viewport_grid_size[1]:
-                tileType = map_data[map_x_count, map_y_count].tile_type
-                if tileType == "floor": 
-                    write_tile = floor_tile # write something in tilemap that will return the correct subtile
+                tile = map_data[map_x_count, map_y_count]
+                if tile.tile_type == "floor": 
+                    write_tile = map_tilemap.floor_tile # write something in tilemap that will return the correct subtile
+                elif len(tile.actors) > 0 and tile.actors[0] == "door":
+                    write_tile = map_tilemap.door_tile
                 else:
-                    write_tile = wall_tile
+                    write_tile = map_tilemap.wall_tile
                 tiles_to_write.append([write_tile, ((map_x_count - self.origin[0]) * self.scale , (map_y_count - self.origin[1]) * self.scale)])
                 map_y_count += 1
             map_x_count += 1
@@ -76,10 +78,11 @@ class TileSet:
         self.asset_file = asset_file
         self.tile_surface = pygame.image.load(asset_file).convert()
 class MapTiles(TileSet):
-    def __init__(self, asset_file = "graphics\map_tiles.png", grid = 32):
+    def __init__(self, asset_file = "data/Tilemap.png", grid = 32):
         super().__init__(asset_file, grid)
         self.floor_tile = self.tile_surface.subsurface(0,0,grid,grid)
         self.wall_tile = self.tile_surface.subsurface(0,grid, grid, grid) #Figure out a 9 way system
+        self.door_tile = self.tile_surface.subsurface(0,grid * 3, grid, grid)
 
  # Edit this if you want to change how many pixels per tile
 

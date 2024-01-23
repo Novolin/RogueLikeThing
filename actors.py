@@ -24,7 +24,7 @@ class GameActor:
         self.solid = True # Assume nothing can pass
 
     def get_actor_sprite(self, graphicsScale = 32):
-        sprite_sheet = pygame.image.load("Graphics/Tilemap.png").convert()
+        sprite_sheet = pygame.image.load("data/Tilemap.png").convert()
         actor_sprite = sprite_sheet.subsurface(0, graphicsScale * self.sprite_id, graphicsScale, graphicsScale)
         return actor_sprite
 
@@ -70,7 +70,7 @@ class Player(GameActor):
             self.equipment = {}
             self.level = 1
             self.xp = 0
-            self.sprite_id = 2 # The ID for the sprite to use, for indexing on the sprite list.
+            self.sprite_id = 3 # The ID for the sprite to use, for indexing on the sprite list.
 
 class Enemy(GameActor):
     # the stuff
