@@ -2,9 +2,10 @@
 #  Python Roguelike Map Data and Generation  #
 #  WHERE THE FUCK AM I? HOW DID I GET HERE?  #
 ##############################################
-import random
+
 import numpy as np
 import json 
+
 # Other scripts:
 import actors
 
@@ -14,20 +15,12 @@ class Tile:
         self.tile_type = tile_type # Floor, what kind of wall, etc.
         self.visible = True # Can the player see it
         self.revealed = True # Has the player discovered it
-    def can_actor_enter(self):
-        if self.tile_type == "wall":
-            return False
-        if len(self.actors) > 0:
-            for actor in self.actors: 
-                if actor.solid:
-                    return False
-        return True
+
     def activate_tile(self):
-        return False
-    def add_actor(self, actor):
-        # Check if an actor can go in the tile, return true if successful.
-        self.actors.append(actor)
-        return True
+        if self.tile_type == "stairup":
+            # go up
+            pass
+        
 
 class DungeonLevel:
     '''parent class for a dungeon floor, which we can use for basically everything'''
@@ -95,13 +88,12 @@ class DungeonLevel:
                 map_actors.append(actors.Player(place_data["actors"][actor]["x"],[place_data["actors"][actor]["y"]]))
             return (loaded_map, map_actors, map_objects, tile_set, name)
 
-
 class Dungeon:
     def __init__(self, depth):
         self.depth = depth
         self.floors = []
 
-    def load_data(self):
+    def load_floor_data(self):
         # Placeholder: Will be used to load saved map data
         pass
 

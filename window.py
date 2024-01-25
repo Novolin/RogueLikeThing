@@ -15,6 +15,8 @@ text_font = pygame.font.SysFont("fixedsys", 11)
 
 
 class ViewWindow:
+    # Parent class for the window
+    # We'll also use this for the main view
     def __init__(self, title, origin, width, height):
         self.title = title
         self.title_size = text_font.size(title)
@@ -52,11 +54,23 @@ class GameWindow(ViewWindow):
             # i need to figure out 9 way tiling lmao
             self.border_data = pygame.image.load("data/bordertest.png").convert()
 
+class PlayerStatus(ViewWindow):
+    def __init__(self, player_name):
+        super().__init__(player_name, (1,48), 303, 143)
+        self.health_bar = False
+        self.mana_bar = False
+        self.player_status = False
+    
+    def update_player_state(self, player):
+        # read the player object to get their health/mana/etc.
+        pass
+        
+
+class TextFeed(ViewWindow):
+    pass
+
 class MenuBar:
     def __init__(self):
         #this will be the menu bar
         #its handled differently :)
         pass
-
-class TextFeed(ViewWindow):
-    pass

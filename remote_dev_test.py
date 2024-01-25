@@ -45,5 +45,6 @@ def write_map_to_txt(mapD):
         
         
 
-map_to_write = mapdata.DungeonLevel("maps/debugmap.json")
+map_to_write = mapdata.DungeonLevel("mapdebug2.json")
 write_map_to_txt(map_to_write)
+
