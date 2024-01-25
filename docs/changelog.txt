@@ -12,3 +12,5 @@ V0.1a - Save Data #1:
         - Added load function to map module
         - broke map generation horrifically (hence load function)
         - got really mad at map generation
+        - Fixed map generation, I think??
+        - Made the window display pretty

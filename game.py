@@ -18,9 +18,10 @@ import numpy as np
 import graphics
 from actors import Player #just import the player actor for now, we can do the other stuff at a later point.
 import mapdata
+import window
 
 actorList = [Player(0,0)]
-
+screen_resolution = [1024, 768]
 
 
 
@@ -28,20 +29,21 @@ actorList = [Player(0,0)]
 def main():
     # Pygame Setup:
     pygame.init()
-    screen = pygame.display.set_mode((1024,768))
+    screen = pygame.display.set_mode(screen_resolution)
     clock = pygame.time.Clock()
+    window.text_font = pygame.font.SysFont("fixedsys", 16)
     running = True
     # Init game state:
     gamestate = 0 # Default game state, turn-based map stuff.
     turnProcess = 0 #where are we in the "initiative"
 
     
-    currentMap = mapdata.DungeonLevel(0,0, graphics.MapTiles(), False) # this will need a replacement eventually
-    currentMap.map = mapdata.load_map_from_file("maps/debugmap.json")
+    currentMap = mapdata.DungeonLevel("maps/debugmap.json") # this will need a replacement eventually
+    
     
     actorList[0].get_player_data(False)
     # Init graphics data:
-    map_view = graphics.Camera(actorList[0])
+    game_window = window.ViewWindow("TEST", screen_resolution[0], screen_resolution[1])
 
     # Fire the loop!
 
@@ -69,9 +71,8 @@ def main():
         # !! Tick game logic here !!
 
         # !! Handle graphics processing here !!
-        #todo: differentiate between menus/game/etc. 
-        map_view.refresh_screen(currentMap, actorList)
-        screen.blit(map_view.cam_surface, (0,0))
+        game_window.render_contents()
+        screen.blit(game_window.window_surface, [0,0])
 
         # Draw the changes to the display
         pygame.display.flip()

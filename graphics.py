@@ -6,11 +6,13 @@ import numpy as np
 import pygame 
 from math import ceil, floor
 
+
+# this needs a rewrite to fit the new window code
 class Camera:
     # A Camera object that can be used to manage the viewport
     def __init__(self, target, cam_res = [1024,768], scale = 32):
         self.origin = [0,0] # Top Left X/Y
-        if type(target) == list:
+        if type(target) == list or tuple:
             self.target_point = True
         else:
             self.target_point = False
@@ -38,9 +40,7 @@ class Camera:
             while map_y_count < self.origin[1] + self.viewport_grid_size[1]:
                 tile = map_data[map_x_count, map_y_count]
                 if tile.tile_type == "floor": 
-                    write_tile = map_tilemap.floor_tile # write something in tilemap that will return the correct subtile
-                elif len(tile.actors) > 0 and tile.actors[0] == "door":
-                    write_tile = map_tilemap.door_tile
+                    write_tile = map_tilemap.floor_tile
                 else:
                     write_tile = map_tilemap.wall_tile
                 tiles_to_write.append([write_tile, ((map_x_count - self.origin[0]) * self.scale , (map_y_count - self.origin[1]) * self.scale)])
@@ -48,6 +48,16 @@ class Camera:
             map_x_count += 1
         self.cam_surface.blits(tiles_to_write)
         return
+    def render_actors(self, actors):
+        for act in actors:
+            if not (
+                act.posx < self.origin[0] or
+                act.posx > self.origin[0] + self.viewport_grid_size[0] or
+                act.posy < self.origin[1] or
+                act.posy > self.origin[1] + self.viewport_grid_size[1] 
+            ):
+                pass # pull actor sprites, place on map screen
+
 
     def update_cam_origin(self):
         if self.target_point:
@@ -84,5 +94,17 @@ class MapTiles(TileSet):
         self.wall_tile = self.tile_surface.subsurface(0,grid, grid, grid) #Figure out a 9 way system
         self.door_tile = self.tile_surface.subsurface(0,grid * 3, grid, grid)
 
- # Edit this if you want to change how many pixels per tile
+class MapBorder(TileSet): # THIS WILL BREAK IF WE CHANGE WINDOW RES
+    def __init__(self, asset_file = "data/bordertest.png", grid = 22):
+       super().__init__(asset_file, grid)
+       self.NW = self.tile_surface.subsurface(0,0,grid,grid)
+       self.N = self.tile_surface.subsurface(grid, 0, grid, grid)
+       self.NE = self.tile_surface.subsurface(grid * 2, 0, grid, grid)
+       self.W = self.tile_surface.subsurface(0, grid, grid, grid)
+       self.E = self.tile_surface.subsurface(grid * 2, grid, grid, grid)
+       self.SW = self.tile_surface.subsurface(grid * 2, grid * 2, grid, grid)
+       self.S = self.tile_surface.subsurface(grid * 2, grid, grid, grid)
+       self.SE = self.tile_surface.subsurface(grid * 2, grid * 2, grid, grid)
+       
+
 
