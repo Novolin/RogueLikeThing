@@ -10,6 +10,7 @@ class Level:
 	var level_name
 	var room_list
 	var hall_list
+	var floor_tiles = PackedVector2Array()
 	func _init(size:Vector2i, level_name:String, entry_point = false, load_from_file = false):
 		self.size = size
 		self.level_name = level_name
@@ -46,11 +47,30 @@ class Level:
 		
 		#or i will after i test this stuff
 		
+		# Finally, write it to the raw floor list because idk how to do things good yet.
+		for room in room_list:
+			var count_x = room.origin.x
+			while count_x <= room.origin.x + room.size.x:
+				var count_y = room.origin.y
+				while count_y <= room.origin.y + room.size.y:
+				self.floor_tiles.append(Vector2i(count_x, count_y))
+				count_y += 1
+			count_x += 1
+		#do the same with halls
 		
 		
 	func render_camera_view(target:TileMap, cam_origin:Vector2i, cam_size:Vector2i = Vector2i(21,21)):
-		pass # push the given rectangle to the tilemap, but make sure that it's within bounds.
-		# this is basically the Camera class from before
+		var count_x = 0
+		while count_x <= cam_size.x:
+			var count_y = 0
+			while count_y <= cam_size.y:
+				if floor_tiles.has(Vector2i(count_x + cam_origin.x, count_y + cam_origin.y)):
+					# We have this as a floor tile, draw to tilemap!
+					target.set_cell(0,Vector2i(count_x, count_y), 0, Vector2i(0,0))
+				else:
+					target.set_cell(0,Vector2i(count_x, count_y), 0, Vector2i(0,1))
+
+		return
 
 			
 		
@@ -108,7 +128,18 @@ class Room:
 			if check_y % 2 == 1: # If it also collides here, we're in trouble!
 				return true
 		return false
-				
+	func get_room_tiles():
+		# returns an array containing every tile location in the given room, in Vector2i coords
+		var output = PackedVector2Array()
+		var count_x = self.origin.x
+		while count_x <= self.origin.x + self.size.x:
+			count_y = self.origin.y
+			while count_y <= self.origin.y + self.size.y:
+				output.append(Vector2i(count_x, count_y))
+				count_y += 1
+			count_x += 1
+
+		return output
 		
 class Hall:
 	func _init(origin:Array, x_length:int, y_length:int, inverted = false, door_location = false):
