@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://cgnwmfgy6g6so"]
+
+[ext_resource type="Texture2D" uid="uid://dyukx6y7hm0uo" path="res://from_py/Tilemap.png" id="1_fcgcc"]
+[ext_resource type="Script" path="res://Scripts/Player.gd" id="2_glu2d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i41op"]
+atlas = ExtResource("1_fcgcc")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ma4h7"]
+size = Vector2(32, 32)
+
+[node name="Player" type="Sprite2D"]
+texture = SubResource("AtlasTexture_i41op")
+centered = false
+script = ExtResource("2_glu2d")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_ma4h7")

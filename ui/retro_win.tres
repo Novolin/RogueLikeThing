@@ -1,0 +1,10 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dmhkw4lvbaytv"]
+
+[ext_resource type="FontFile" uid="uid://d0tctxgq3u6qe" path="res://font/FSEX300.ttf" id="2_431g0"]
+
+[resource]
+default_font = ExtResource("2_431g0")
+default_font_size = 14
+/colors/menu_bar = Color(0, 0, 0.705882, 1)
+/icons/close = null
+/icons/menu = null
