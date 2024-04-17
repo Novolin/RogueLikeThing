@@ -1,0 +1,157 @@
+[gd_scene load_steps=12 format=3 uid="uid://dev0qhwm8jh1w"]
+
+[ext_resource type="Script" path="res://scripts/window_script.gd" id="1_mok3g"]
+[ext_resource type="Texture2D" uid="uid://nq05gpaj70ig" path="res://ui/window_border_normal.png" id="2_5a1q1"]
+[ext_resource type="FontFile" uid="uid://d0tctxgq3u6qe" path="res://font/FSEX300.ttf" id="2_u4k7t"]
+[ext_resource type="Texture2D" uid="uid://cauojs4y0q2yd" path="res://ui/buttons/retro_menu_button.tres" id="5_rk4cb"]
+[ext_resource type="Theme" uid="uid://dmhkw4lvbaytv" path="res://ui/retro_win.tres" id="6_21kwq"]
+[ext_resource type="Texture2D" uid="uid://bkaym5438ql3m" path="res://ui/buttons/retro_menu_pressed.tres" id="6_qw01a"]
+[ext_resource type="Texture2D" uid="uid://dyn0ec05773jk" path="res://ui/buttons/minimize_button_pressed.tres" id="7_4r1gp"]
+[ext_resource type="Texture2D" uid="uid://bkgnqcj245bkv" path="res://ui/buttons/maximize_button.tres" id="8_rluj2"]
+[ext_resource type="Texture2D" uid="uid://cdonvxncq6jfc" path="res://ui/buttons/maximize_button_pressed.tres" id="9_aro0a"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_octyj"]
+bg_color = Color(1, 0.984314, 0.941176, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qoqj6"]
+font = ExtResource("2_u4k7t")
+shadow_color = Color(0, 0, 0, 0.501961)
+
+[node name="Window" type="Control"]
+clip_contents = true
+custom_minimum_size = Vector2(144, 24)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -506.0
+offset_bottom = -384.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mok3g")
+
+[node name="window_border" type="NinePatchRect" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_5a1q1")
+region_rect = Rect2(0, 0, 9, 9)
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="window_container" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 26.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_21kwq")
+theme_override_styles/panel = SubResource("StyleBoxFlat_octyj")
+
+[node name="title_bar" type="ColorRect" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_bottom = 24.0
+grow_horizontal = 2
+color = Color(0, 0, 0.705882, 1)
+
+[node name="title_border" type="NinePatchRect" parent="title_bar"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_right = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_5a1q1")
+region_rect = Rect2(0, 0, 9, 9)
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="map_title" type="Label" parent="title_bar"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 24.0
+grow_horizontal = 2
+text = "Window"
+label_settings = SubResource("LabelSettings_qoqj6")
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 0
+uppercase = true
+
+[node name="menu" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0.752941, 0.752941, 0.752941, 1)
+
+[node name="menu_button" type="TextureButton" parent="menu"]
+layout_mode = 0
+offset_right = 24.0
+offset_bottom = 24.0
+texture_normal = ExtResource("5_rk4cb")
+texture_pressed = ExtResource("6_qw01a")
+
+[node name="minimize" type="ColorRect" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -24.0
+offset_bottom = 24.0
+grow_horizontal = 0
+color = Color(0, 0, 0.705882, 1)
+
+[node name="minimize_button" type="TextureButton" parent="minimize"]
+layout_mode = 1
+offset_right = 24.0
+offset_bottom = 24.0
+texture_normal = ExtResource("7_4r1gp")
+texture_pressed = ExtResource("7_4r1gp")
+
+[node name="maximize" type="ColorRect" parent="."]
+visible = false
+clip_contents = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -24.0
+offset_bottom = 24.0
+grow_horizontal = 0
+color = Color(0, 0, 0.705882, 1)
+
+[node name="maximize_button" type="TextureButton" parent="maximize"]
+layout_mode = 1
+offset_right = 24.0
+offset_bottom = 24.0
+texture_normal = ExtResource("8_rluj2")
+texture_pressed = ExtResource("9_aro0a")
+
+[connection signal="pressed" from="menu/menu_button" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="minimize/minimize_button" to="." method="_on_minimize_button_pressed"]
+[connection signal="pressed" from="maximize/maximize_button" to="." method="_on_maximize_button_pressed"]

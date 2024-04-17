@@ -1,6 +1,0 @@
-V0.0 - Initial Version
-        - Limited Actors framework
-        - Limited Graphics framework
-        - Map Generation implemented, to be reworked
-        - basic camera system implemented.
-V0.0a - Initial with Objects

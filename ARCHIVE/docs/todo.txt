@@ -1,0 +1,28 @@
+- actor sprites are missing transparency
+- map generation is bad 
+
+Not Started:
+- Enemies
+- Items
+- Menus
+- Collision
+- Sound
+
+In Progress:
+- Map Generation (~20% after rewrite)
+- Map Rendering (~50%?)
+    * handle multiple tilemaps
+    * draw sprites in the right location
+- Input Handling (1%)
+- Graphics (lmfao%)
+
+
+window writing notes:
+    1024x768 (0,0) - window size
+    720x744 (304, 24) - sub view
+    716x716 (305, 49) - Sub window
+    672x672 (327, 71) - map view area
+    303x24 (1,24) - menu bar
+    303 x 143 (1,48) - Player window
+    303 x 215, (1,191) - Verb window
+    303 x 362, (1, 406) - Message window (you'll need subsurfaces for each line)

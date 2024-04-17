@@ -1,0 +1,16 @@
+V0.0 - Initial Version
+        - Limited Actors framework
+        - Limited Graphics framework
+        - Map Generation implemented, to be reworked
+        - basic camera system implemented.
+V0.0a - Updated Camera:
+        - Camera is now object-based, allowing for sub-views
+        - fixed crashes when camera scrolls too far
+        - Actors/Map data updated to reflect camera changes
+        - Reworked game rendering code to reflect camera changes.
+V0.1a - Save Data #1:
+        - Added load function to map module
+        - broke map generation horrifically (hence load function)
+        - got really mad at map generation
+        - Fixed map generation, I think??
+        - Made the window display pretty
