@@ -1,6 +1,0 @@
-AtlasTexture
-TileSet
-Theme
-FontFile
-SystemFont
-TileMapPattern

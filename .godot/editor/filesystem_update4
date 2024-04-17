@@ -1,5 +1,0 @@
-res://default_env.tres
-res://map.tscn
-res://tile_sets/dungeon.tres
-res://globalrng.gd
-res://Scripts/map_gen.gd
