@@ -2,10 +2,12 @@ extends Control
 var show_window = true
 var collapse_window = false
 var window_border_size
+var window_children
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	window_border_size = $window_border.get_size()
-	pass # Replace with function body.
+	window_children = get_node(".").get_children().slice(6)
+	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -27,7 +29,9 @@ func _on_minimize_button_pressed():
 	$window_border.set_size(target_size)
 	$minimize.hide()
 	$maximize.show()
-	pass # Replace with function body.
+	for n in window_children:
+		n.hide()
+
 
 
 func _on_maximize_button_pressed():
@@ -36,4 +40,5 @@ func _on_maximize_button_pressed():
 	$window_border.set_size(window_border_size)
 	$maximize.hide()
 	$minimize.show()
-	pass # Replace with function body.
+	for n in window_children:
+		n.show()

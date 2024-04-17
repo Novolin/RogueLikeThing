@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://ddaihbu0o7uy4"]
+[gd_scene load_steps=5 format=3 uid="uid://ddaihbu0o7uy4"]
 
 [ext_resource type="PackedScene" uid="uid://dev0qhwm8jh1w" path="res://window_template.tscn" id="1_1u0nr"]
 [ext_resource type="Script" path="res://scripts/main_scr.gd" id="1_re2hd"]
 [ext_resource type="PackedScene" uid="uid://wpy6832jdc26" path="res://map.tscn" id="2_pjlh4"]
+[ext_resource type="PackedScene" uid="uid://cgnwmfgy6g6so" path="res://player.tscn" id="3_vpm7w"]
 
 [node name="primary_screen" type="Control"]
 clip_contents = true
@@ -29,6 +30,9 @@ offset_bottom = -2.0
 
 [node name="map_area" parent="main_window/map_window" instance=ExtResource("2_pjlh4")]
 position = Vector2(2, 24)
+
+[node name="Player" parent="main_window/map_window" instance=ExtResource("3_vpm7w")]
+position = Vector2(34, 24)
 
 [node name="player_stats" parent="main_window" instance=ExtResource("1_1u0nr")]
 layout_mode = 1

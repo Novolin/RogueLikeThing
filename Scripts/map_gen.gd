@@ -8,7 +8,7 @@ class Level:
 	var file_loc = false
 	var exit_point
 	var level_name
-	var room_list
+	var room_list = []
 	var hall_list
 	var floor_tiles = PackedVector2Array()
 	func _init(size:Vector2i, level_name:String, entry_point = false, load_from_file = false):
@@ -18,11 +18,11 @@ class Level:
 			self.entry_point = Vector2i(size.x, (size.y / 2) - 1)
 		if load_from_file:
 			self.file_loc = load_from_file
-
+		## BELOW WILL BE DEPRECIATED, KEPT BECAUSE OTHERWISE THINGS GO KABOOM?? ##
 	func generate_layout(first_floor = false):
 		var density = 0
 		var density_goal = (self.size.x * self.size.y)/4
-		room_list[0] = Room.new(self.entry_point, Vector2i(randi_range(3,8), randi_range(3,8)), "start")
+		room_list.append(Room.new(self.entry_point, Vector2i(randi_range(3,8), randi_range(3,8)), "start"))
 		if first_floor: # Make the first room of the first floor always the same:
 			room_list[0].origin = Vector2i(self.size.x - 4, (size.y/2 ) - 3)
 		#check the validity of the first room:
@@ -32,7 +32,7 @@ class Level:
 		# Begin the room generation loop:
 		density = room_list[0].size.x * room_list[0].size.y
 		while density < density_goal:
-			var next_room_size = Vector2i(randi_range(3,8), randi_range(3,8))
+			var next_room_size = Vector2i(randi_range(3,5), randi_range(3,5))
 			var next_room_origin = Vector2i(randi_range(0,self.size.x - next_room_size.x), randi_range(0, self.size.y - next_room_size.y))
 			var next_room = Room.new(next_room_origin, next_room_size)
 			var next_room_valid = true
@@ -44,20 +44,39 @@ class Level:
 				room_list.append(next_room)
 				
 		# The level is now populated with rooms, add the hallways.
-		
-		#or i will after i test this stuff
-		
-		# Finally, write it to the raw floor list because idk how to do things good yet.
+		## END DEPRECIATION ##
+	func process_floor_tiles():
 		for room in room_list:
 			var count_x = room.origin.x
 			while count_x <= room.origin.x + room.size.x:
 				var count_y = room.origin.y
 				while count_y <= room.origin.y + room.size.y:
-				self.floor_tiles.append(Vector2i(count_x, count_y))
-				count_y += 1
-			count_x += 1
+					self.floor_tiles.append(Vector2i(count_x, count_y))
+					count_y += 1
+				count_x += 1
 		#do the same with halls
 		
+	func generate_poi_layout(first_floor = false): # Updating to use a POI system instead because i like that more
+		var poi_list = []
+		poi_list.append(entry_point)
+		
+		var number_of_points = 10 # Just a few points for now
+		while len(poi_list) < number_of_points:
+			var next_point = Vector2i(randi_range(0,size.x), randi_range(0,size.y))
+			while next_point in poi_list:
+				next_point = Vector2i(randi_range(0,size.x), randi_range(0,size.y)) # just regen it for now lmao
+			poi_list.append(next_point)
+		
+		# To start, I'm not going to worry about halls clipping through stuff.
+		# I kinda solved that in python, but I want to get this to a working state first
+		
+		var starting_poi = 0
+		while starting_poi < len(poi_list) - 1:
+			# place a room at the poi, again we're going quick and dirty today
+			room_list.append(Room.new(poi_list[starting_poi], Vector2i(randi_range(2,3), randi_range(2,3))))
+			# yeah then do halls but for now just move on
+			starting_poi += 1
+		process_floor_tiles()
 		
 	func render_camera_view(target:TileMap, cam_origin:Vector2i, cam_size:Vector2i = Vector2i(21,21)):
 		var count_x = 0
@@ -69,6 +88,8 @@ class Level:
 					target.set_cell(0,Vector2i(count_x, count_y), 0, Vector2i(0,0))
 				else:
 					target.set_cell(0,Vector2i(count_x, count_y), 0, Vector2i(0,1))
+				count_y += 1
+			count_x += 1
 
 		return
 
@@ -80,7 +101,7 @@ class Room:
 	var origin
 	var size
 	var special_tiles = {}
-	func _init(origin:Vector2i, size:Vector2i, special_type = false):
+	func _init(origin:Vector2i, size:Vector2i, special_type = "none"):
 		self.origin = origin
 		self.size = size
 		if special_type == "start":
@@ -133,7 +154,7 @@ class Room:
 		var output = PackedVector2Array()
 		var count_x = self.origin.x
 		while count_x <= self.origin.x + self.size.x:
-			count_y = self.origin.y
+			var count_y = self.origin.y
 			while count_y <= self.origin.y + self.size.y:
 				output.append(Vector2i(count_x, count_y))
 				count_y += 1
