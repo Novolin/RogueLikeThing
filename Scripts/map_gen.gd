@@ -9,7 +9,7 @@ class Level:
 	var exit_point
 	var level_name
 	var room_list = []
-	var hall_list
+	var hall_list = []
 	var floor_tiles = PackedVector2Array()
 	func _init(size:Vector2i, level_name:String, entry_point = false, load_from_file = false):
 		self.size = size
@@ -45,6 +45,7 @@ class Level:
 				
 		# The level is now populated with rooms, add the hallways.
 		## END DEPRECIATION ##
+	
 	func process_floor_tiles():
 		for room in room_list:
 			var count_x = room.origin.x
@@ -60,22 +61,44 @@ class Level:
 		var poi_list = []
 		poi_list.append(entry_point)
 		
-		var number_of_points = 10 # Just a few points for now
+		var number_of_points = 23 # Just a few points for now
 		while len(poi_list) < number_of_points:
-			var next_point = Vector2i(randi_range(0,size.x), randi_range(0,size.y))
-			while next_point in poi_list:
-				next_point = Vector2i(randi_range(0,size.x), randi_range(0,size.y)) # just regen it for now lmao
+			while true
+				var try_another_point = true # this is our break condition
+				var next_point = Vector2i(randi_range(0,size.x), randi_range(0,size.y))
+				for p in poi_list: # see if we overlap a radius around a point
+					var x_ok = false
+					var y_ok = false
+					if next_point.x > p.x + 8 and next_point.x < p.x - 8: # make a barrier around all of the room points
+						x_ok = true
+					if next_point.y > p.y + 8 and next_point.y < p.y - 8: # Doing this with two ifs because it's easier to read
+						y_ok = true
+					if y_ok or x_ok:
+						try_another_point = false
+				if not try_another_point: # make sure we're good
+					break
 			poi_list.append(next_point)
+
+		# Now we have our points, so we can start placing rooms
+		# First room will have our entry stairs, so we place it separately:
 		
-		# To start, I'm not going to worry about halls clipping through stuff.
-		# I kinda solved that in python, but I want to get this to a working state first
+		var next_room = Room.new(poi_list[0], Vector2i(randi_range(3,5), randi_range(3,5)), "start")
+		room_list.append(next_room) # Add it to the list!
+
+		while len(room_list) < len (poi_list):
+			var current_poi = len(room_list) # Use the length of the room list to give us the index of our next poi
+			next_room = Room.new(poi_list[current_poi], Vector2i(randi_range(3,8), randi_range(3,8)))
+			# now generate a matching hall!
+			# Start with a relative direction:
+			var last_room = room_list[current_poi - 1]
+			var x_offset = poi_list[current_poi].x - room_list[current_poi - 1].origin.x
+			var y_offset = poi_list[current_poi].y - room_list[current_poi - 1].origin.y
+			
+
+
+			
+
 		
-		var starting_poi = 0
-		while starting_poi < len(poi_list) - 1:
-			# place a room at the poi, again we're going quick and dirty today
-			room_list.append(Room.new(poi_list[starting_poi], Vector2i(randi_range(2,3), randi_range(2,3))))
-			# yeah then do halls but for now just move on
-			starting_poi += 1
 		process_floor_tiles()
 		
 	func render_camera_view(target:TileMap, cam_origin:Vector2i, cam_size:Vector2i = Vector2i(21,21)):
@@ -161,13 +184,46 @@ class Room:
 			count_x += 1
 
 		return output
-		
+	
+	func get_border_tiles(direction): # Returns a set of Vector2i points indicating the tiles on that edge of the room
+		var out_array = [] # kinda quick and dirty for now, can be cleaned up later for sure
+		if direction == "E":
+			var tile_out_x = origin.x + size.x + 1
+			var tile_out_y = origin.y
+			while tile_out_y <= origin.y + size.y:
+				out_array.append(Vector2i(tile_out_x, tile_out_y))
+				tile_out_y += 1
+		elif direction == "W":
+			tile_out_x = origin.x - 1
+			tile.out_y = origin.y
+			while tile_out_y <= origin.y + size.y:
+				out_array.append(Vector2i(tile_out_x, tile_out_y))
+				tile_out_y += 1
+		elif direction == "N":
+			tile_out_x = origin.x
+			tile_out_y = origin.y - 1
+			while tile_out_x <= origin.x + size.x:
+				out_array.append(Vector2i(tile_out_x, tile_out_y))
+				tile_out_x += 1
+		elif direction == "S":
+			tile_out_x = origin.x
+			tile_out_y = origin.y + size.y + 1
+			while tile_out_x <= origin.x + size.x:
+				out_array.append(Vector2i(tile_out_x, tile_out_y))
+				tile_out_x += 1
+		return out_array
+
 class Hall:
-	func _init(origin:Array, x_length:int, y_length:int, inverted = false, door_location = false):
+	func _init(origin:Array, x_length:int, y_length:int, door_locations = 0):
 		self.origin = origin
 		self.x_length = x_length
 		self.y_length = y_length
 		self.inverted = inverted
 		self.door_location = door_location
 		self.connected_rooms = []
+	func get_hall_tiles(): # Returns a list of every tile in the hall, and its contents
+		var out_arr = []
+
+
+		return out_arr
 		
